@@ -1,27 +1,30 @@
 import express from "express";
-const app = express();
 import { config } from "dotenv";
-import { UserService } from "./services/UserService";
 import { UserRepository } from "./repositories/UserRepository";
 import { UserController } from "./controllers/UserController";
-import { Connection } from "./database/Connection";
+import { Mongo } from "./database/Mongo";
 
-config();
+const main = async () => {
+  config();
 
-const port = process.env.PORT || 8080;
+  const port = process.env.PORT || 8080;
 
-Connection.connect();
+  const app = express();
 
-app.get("/users", async (req, res) => {
-  const userRepository = new UserRepository();
-  const userService = new UserService(userRepository);
-  const userController = new UserController(userService);
+  await Mongo.connect();
 
-  const users = await userController.getUsers();
+  app.get("/users", async (req, res) => {
+    const userRepository = new UserRepository();
+    const userController = new UserController(userRepository);
 
-  res.status(users.statusCode).json(users.body);
-});
+    const users = await userController.getUsers();
 
-app.listen(port, () => {
-  console.log(`listening on port ${port}`);
-});
+    res.status(users.statusCode).json(users.body);
+  });
+
+  app.listen(port, () => {
+    console.log(`listening on port ${port}`);
+  });
+};
+
+main();
