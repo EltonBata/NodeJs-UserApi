@@ -19,7 +19,7 @@ const main = async () => {
     const userRepository = new UserRepository();
     const userController = new UserController(userRepository);
 
-    const users = await userController.handeGetUsers();
+    const users = await userController.handleGetUsers();
 
     res.status(users.statusCode).json(users.body);
   });
@@ -30,7 +30,20 @@ const main = async () => {
     const userRepository = new UserRepository();
     const userController = new UserController(userRepository);
 
-    const user = await userController.handeCreateUser(createUser);
+    const user = await userController.handleCreateUser(createUser);
+
+    res.status(user.statusCode).json(user.body);
+  });
+
+  app.put("/users/:id", async (req, res) => {
+    const id = req.params.id;
+
+    const data: User = req.body;
+
+    const userRepository = new UserRepository();
+    const userController = new UserController(userRepository);
+
+    const user = await userController.handleUpdateUser(id, data);
 
     res.status(user.statusCode).json(user.body);
   });
