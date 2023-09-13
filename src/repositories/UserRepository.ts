@@ -39,4 +39,24 @@ export class UserRepository implements IUsersRepository {
 
     return user;
   }
+
+  async deleteUser(id: string): Promise<User> {
+    const user = await Mongo.db
+      .collection<User>("users")
+      .findOne({ _id: new ObjectId(id) });
+
+    if (!user) {
+      throw new Error("user not found");
+    }
+
+    const { deletedCount } = await Mongo.db
+      .collection("users")
+      .deleteOne({ _id: new ObjectId(id) });
+
+    if (!deletedCount) {
+      throw new Error("user not deleted");
+    }
+
+    return user;
+  }
 }

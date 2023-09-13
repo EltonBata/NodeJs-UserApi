@@ -48,6 +48,17 @@ const main = async () => {
     res.status(user.statusCode).json(user.body);
   });
 
+  app.delete("/users/:id", async (req, res) => {
+    const id = req.params.id;
+
+    const userRepository = new UserRepository();
+    const userController = new UserController(userRepository);
+
+    const user = await userController.handleDeleteUser(id);
+
+    res.status(user.statusCode).json(user.body);
+  });
+
   app.listen(port, () => {
     console.log(`listening on port ${port}`);
   });

@@ -60,4 +60,19 @@ export class UserController implements IUsersController {
       };
     }
   }
+
+  async handleDeleteUser(id: string): Promise<HttpResponse<User>> {
+    try {
+      const user = await this.userService.deleteUser(id);
+      return {
+        statusCode: 200,
+        body: user,
+      };
+    } catch (error) {
+      return {
+        statusCode: 200,
+        body: `Something went wrong: ${error}`,
+      };
+    }
+  }
 }
