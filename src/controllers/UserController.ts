@@ -1,78 +1,61 @@
+import { ok } from "assert";
 import { IUsersController, IUsersRepository } from "../contracts/UserContract";
 import { User } from "../models/Users";
-import { HttpResponse } from "../responses/HttpResponse";
+import {
+  HttpResponse,
+  badRequest,
+  created,
+  done,
+  serverError,
+} from "../responses/HttpResponse";
 import validator from "validator";
 
 export class UserController implements IUsersController {
   constructor(private readonly userService: IUsersRepository) {}
 
-  async handleGetUsers(): Promise<HttpResponse<User[]>> {
+  async handleGetUsers(): Promise<HttpResponse<User[] | string>> {
     try {
       const users = await this.userService.getUsers();
 
-      return {
-        statusCode: 200,
-        body: users,
-      };
+      return done<User[]>(users);
     } catch (error) {
-      return {
-        statusCode: 500,
-        body: `Something went wrong: ${error}`,
-      };
+      return serverError();
     }
   }
 
-  async handleCreateUser(data: User): Promise<HttpResponse<User>> {
+  async handleCreateUser(data: User): Promise<HttpResponse<User | string>> {
     const cuser: User = data;
 
     if (!validator.isEmail(cuser.email)) {
-      return {
-        statusCode: 400,
-        body: "Email invalid",
-      };
+      return badRequest("Email invalid");
     }
 
     try {
       const user = await this.userService.createUser(cuser);
-      return {
-        statusCode: 200,
-        body: user,
-      };
+      return created(user);
     } catch (error) {
-      return {
-        statusCode: 500,
-        body: `Something went wrong: ${error}`,
-      };
+      return serverError();
     }
   }
 
-  async handleUpdateUser(id: string, data: User): Promise<HttpResponse<User>> {
+  async handleUpdateUser(
+    id: string,
+    data: User
+  ): Promise<HttpResponse<User | string>> {
     try {
       const user = await this.userService.updateUser(id, data);
-      return {
-        statusCode: 200,
-        body: user,
-      };
+      return done<User>(user);
     } catch (error) {
-      return {
-        statusCode: 200,
-        body: `Something went wrong: ${error}`,
-      };
+      return serverError();
     }
   }
 
-  async handleDeleteUser(id: string): Promise<HttpResponse<User>> {
+  async handleDeleteUser(id: string): Promise<HttpResponse<User | string>> {
     try {
       const user = await this.userService.deleteUser(id);
-      return {
-        statusCode: 200,
-        body: user,
-      };
+      return done<User>(user);
     } catch (error) {
-      return {
-        statusCode: 200,
-        body: `Something went wrong: ${error}`,
-      };
+      return serverError();
     }
   }
 }
