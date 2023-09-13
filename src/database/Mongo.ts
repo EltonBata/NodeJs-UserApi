@@ -2,16 +2,15 @@
 import { MongoClient, Db } from "mongodb";
 
 export const Mongo = {
+  db: undefined as unknown as Db,
 
-   db: undefined as unknown as Db,
-
-   async connect(): Promise<void> {
+  async connect(): Promise<void> {
     const username = process.env.MONGODB_USERNAME;
     const password = process.env.MONGODB_PASSWORD;
     const url = `${process.env.MONGODB_URL}${process.env.MONGODB_DATABASE}`;
 
     //Connection with Mongodb
-    const client = new MongoClient(url);
+    const client = new MongoClient(url, { auth: { username, password } });
 
     this.db = client.db(`${process.env.MONGODB_DATABASE}`);
 
@@ -27,5 +26,5 @@ export const Mongo = {
     //   .catch((err) => {
     //     console.error("Erro ao conectar ao MongoDB:", err);
     //   });
-  }
-}
+  },
+};

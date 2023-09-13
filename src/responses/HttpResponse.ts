@@ -1,4 +1,3 @@
-import exp from "constants";
 import { HttpStatusCode } from "../helpers/HttpStatusCode";
 
 export interface HttpResponse<T> {
@@ -25,5 +24,3 @@ export const serverError = (): HttpResponse<string> => ({
   statusCode: HttpStatusCode.SERVER_ERROR,
   body: "Something went wrong",
 });
-
-;
